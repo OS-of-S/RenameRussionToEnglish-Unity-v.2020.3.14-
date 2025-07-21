@@ -5,7 +5,7 @@ namespace RenameRusToEng
 {
 
     /// <summary>
-    /// Класс Разговорника (поддерживает разные сортировки и быстрое добавление элементов).
+    /// РљР»Р°СЃСЃ Р Р°Р·РіРѕРІРѕСЂРЅРёРєР° (РїРѕРґРґРµСЂР¶РёРІР°РµС‚ СЂР°Р·РЅС‹Рµ СЃРѕСЂС‚РёСЂРѕРІРєРё Рё Р±С‹СЃС‚СЂРѕРµ РґРѕР±Р°РІР»РµРЅРёРµ СЌР»РµРјРµРЅС‚РѕРІ).
     /// </summary>
     public class AutoSortedDict : List<DictElement>
     {
@@ -61,10 +61,10 @@ namespace RenameRusToEng
                 if (diff == 0)
                 {
                     diff = string.Compare(a.eng, b.eng, StringComparison.CurrentCulture);
-                    if (a.eng == "" || b.eng == "") return -diff; //Отдельная обработка пустой строки чтоб все пустые строки были в конце.
+                    if (a.eng == "" || b.eng == "") return -diff; //РћС‚РґРµР»СЊРЅР°СЏ РѕР±СЂР°Р±РѕС‚РєР° РїСѓСЃС‚РѕР№ СЃС‚СЂРѕРєРё С‡С‚РѕР± РІСЃРµ РїСѓСЃС‚С‹Рµ СЃС‚СЂРѕРєРё Р±С‹Р»Рё РІ РєРѕРЅС†Рµ.
                 }
                 else
-                    if (a.rus == "" || b.rus == "") return -diff; //Отдельная обработка пустой строки чтоб все пустые строки были в конце.
+                    if (a.rus == "" || b.rus == "") return -diff; //РћС‚РґРµР»СЊРЅР°СЏ РѕР±СЂР°Р±РѕС‚РєР° РїСѓСЃС‚РѕР№ СЃС‚СЂРѕРєРё С‡С‚РѕР± РІСЃРµ РїСѓСЃС‚С‹Рµ СЃС‚СЂРѕРєРё Р±С‹Р»Рё РІ РєРѕРЅС†Рµ.
                 return diff;
             }
         }
@@ -74,7 +74,7 @@ namespace RenameRusToEng
             int diff = b.Length - a.Length;
             if (diff == 0)
             {
-                diff = string.Compare(a, b, StringComparison.CurrentCulture); // Для однозначности дополнительно сортируем по алфавиту.
+                diff = string.Compare(a, b, StringComparison.CurrentCulture); // Р”Р»СЏ РѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ СЃРѕСЂС‚РёСЂСѓРµРј РїРѕ Р°Р»С„Р°РІРёС‚Сѓ.
             }
             return diff;
         }

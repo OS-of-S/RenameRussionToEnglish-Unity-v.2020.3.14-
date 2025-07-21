@@ -8,7 +8,7 @@ namespace RenameRusToEng
 {
 
     /// <summary>
-    /// Элемент GUI, представляющий отдельный объект в окне результатов.
+    /// Р­Р»РµРјРµРЅС‚ GUI, РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‰РёР№ РѕС‚РґРµР»СЊРЅС‹Р№ РѕР±СЉРµРєС‚ РІ РѕРєРЅРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ.
     /// </summary>
     class objectLogsRepresentation : VisualElement
     {
@@ -16,8 +16,8 @@ namespace RenameRusToEng
         const string expanded_icon = "d_in_foldout_on";
         const string collapsed_icon = "d_in_foldout";
         objectLogsRepresentation parentLog;
-        public int depth; // Глубина вложенности, нужна для вычисления отступа.
-        const float depth_gap = 15; // Размер отступа на единицу глубины.
+        public int depth; // Р“Р»СѓР±РёРЅР° РІР»РѕР¶РµРЅРЅРѕСЃС‚Рё, РЅСѓР¶РЅР° РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ РѕС‚СЃС‚СѓРїР°.
+        const float depth_gap = 15; // Р Р°Р·РјРµСЂ РѕС‚СЃС‚СѓРїР° РЅР° РµРґРёРЅРёС†Сѓ РіР»СѓР±РёРЅС‹.
 
         public VisualElement Make_foldout_header_contents()
         {
@@ -25,7 +25,7 @@ namespace RenameRusToEng
 
 
             Texture icon;
-            switch (info.type) // Иконка объекта
+            switch (info.type) // РРєРѕРЅРєР° РѕР±СЉРµРєС‚Р°
             {
                 case ObjectSubstitutionInfo.ObjectType.GAMEOBJECT:
                     icon = AssetPreview.GetMiniTypeThumbnail(typeof(GameObject));
@@ -34,7 +34,7 @@ namespace RenameRusToEng
                     icon = EditorGUIUtility.IconContent("TextMesh Icon").image;
                     break;
                 default:
-                    icon = AssetPreview.GetMiniThumbnail(GetAssetToFocus());//EditorGUIUtility.IconContent("d_eyeDropper.sml").image; // дефолтная иконка
+                    icon = AssetPreview.GetMiniThumbnail(GetAssetToFocus());//EditorGUIUtility.IconContent("d_eyeDropper.sml").image; // РґРµС„РѕР»С‚РЅР°СЏ РёРєРѕРЅРєР°
                     break;
             }
 
@@ -49,7 +49,7 @@ namespace RenameRusToEng
                 }
             });
 
-            Label displayed = new Label() // Лейбл
+            Label displayed = new Label() // Р›РµР№Р±Р»
             {
                 text = info.displayed_text,
                 style = {
@@ -63,7 +63,7 @@ namespace RenameRusToEng
             if (info.Details.Count > 0)
             {
                 displayed.style.unityFontStyleAndWeight = FontStyle.Italic;
-                displayed.text += " (Вхождений: " + info.Details.Count.ToString() + ")";
+                displayed.text += " (Р’С…РѕР¶РґРµРЅРёР№: " + info.Details.Count.ToString() + ")";
             }
             else displayed.style.unityFontStyleAndWeight = FontStyle.Bold;
 
@@ -126,7 +126,7 @@ namespace RenameRusToEng
 
             foldout_header.Add(new VisualElement() { style = { width = depth_gap * depth, flexShrink = 0 } });
 
-            // Треугольник (кнопка раскрыть-закрыть список):
+            // РўСЂРµСѓРіРѕР»СЊРЅРёРє (РєРЅРѕРїРєР° СЂР°СЃРєСЂС‹С‚СЊ-Р·Р°РєСЂС‹С‚СЊ СЃРїРёСЃРѕРє):
             if (info.Childrens.Count > 0)
             {
                 paddle_triange.style.maxHeight = paddle_triange.style.minHeight;
@@ -136,31 +136,31 @@ namespace RenameRusToEng
             }
             else
             {
-                // пустое пространство:
+                // РїСѓСЃС‚РѕРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ:
                 foldout_header.Add(new VisualElement() { style = { height = paddle_triange.style.height, width = paddle_triange.style.width } });
             }
 
-            // Содержание заголовка:
+            // РЎРѕРґРµСЂР¶Р°РЅРёРµ Р·Р°РіРѕР»РѕРІРєР°:
             VisualElement foldout_header_contents = Make_foldout_header_contents();
 
             Clickable focus = new Clickable(FocusOnObject);
-            focus.activators.Clear(); // Оно по умолчанию создаёт фильтр, который считывает любое нажатие левой кнопки мыши, приходится удалять вручную.
+            focus.activators.Clear(); // РћРЅРѕ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ СЃРѕР·РґР°С‘С‚ С„РёР»СЊС‚СЂ, РєРѕС‚РѕСЂС‹Р№ СЃС‡РёС‚С‹РІР°РµС‚ Р»СЋР±РѕРµ РЅР°Р¶Р°С‚РёРµ Р»РµРІРѕР№ РєРЅРѕРїРєРё РјС‹С€Рё, РїСЂРёС…РѕРґРёС‚СЃСЏ СѓРґР°Р»СЏС‚СЊ РІСЂСѓС‡РЅСѓСЋ.
             focus.activators.Add(new ManipulatorActivationFilter { clickCount = 2, button = MouseButton.LeftMouse });
             foldout_header_contents.AddManipulator(focus);
 
             GenericMenu RightClickMenu = new GenericMenu();
             Clickable doubleclickmenu = new Clickable(RightClickMenu.ShowAsContext);
-            doubleclickmenu.activators.Clear(); // Оно по умолчанию создаёт фильтр, который считывает любое нажатие левой кнопки мыши, приходится удалять вручную.
+            doubleclickmenu.activators.Clear(); // РћРЅРѕ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ СЃРѕР·РґР°С‘С‚ С„РёР»СЊС‚СЂ, РєРѕС‚РѕСЂС‹Р№ СЃС‡РёС‚С‹РІР°РµС‚ Р»СЋР±РѕРµ РЅР°Р¶Р°С‚РёРµ Р»РµРІРѕР№ РєРЅРѕРїРєРё РјС‹С€Рё, РїСЂРёС…РѕРґРёС‚СЃСЏ СѓРґР°Р»СЏС‚СЊ РІСЂСѓС‡РЅСѓСЋ.
             doubleclickmenu.activators.Add(new ManipulatorActivationFilter { button = MouseButton.RightMouse });
             foldout_header.AddManipulator(doubleclickmenu);
 
 
             if (info.Details.Count > 0)
             {
-                RightClickMenu.AddItem(new GUIContent("Показать подробности"), false, ShowInfo);
+                RightClickMenu.AddItem(new GUIContent("РџРѕРєР°Р·Р°С‚СЊ РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё"), false, ShowInfo);
             }
             else
-                RightClickMenu.AddDisabledItem(new GUIContent("Показать подробности (нет вхождений)"), false);
+                RightClickMenu.AddDisabledItem(new GUIContent("РџРѕРєР°Р·Р°С‚СЊ РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё (РЅРµС‚ РІС…РѕР¶РґРµРЅРёР№)"), false);
 
             foldout_header.Add(foldout_header_contents);
 
@@ -197,7 +197,7 @@ namespace RenameRusToEng
                     Selection.SetActiveObjectWithContext(ass_to_focus, null);
                     break;
                 case ObjectSubstitutionInfo.ObjectType.TEXT:
-                    if (!AssetDatabase.OpenAsset(ass_to_focus, 0, 0)) Debug.LogError("Не удалось открыть файл " + AssetDatabase.GetAssetPath(ass_to_focus));
+                    if (!AssetDatabase.OpenAsset(ass_to_focus, 0, 0)) Debug.LogError("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» " + AssetDatabase.GetAssetPath(ass_to_focus));
                     break;
                 case ObjectSubstitutionInfo.ObjectType.GAMEOBJECT:
                     Type t = ass_to_focus.GetType();

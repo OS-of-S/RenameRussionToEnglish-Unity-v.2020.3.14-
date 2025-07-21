@@ -18,7 +18,7 @@ namespace RenameRusToEng
 
         public override void OnDragPerform(DragPerformEvent _)
         {
-            int choose = EditorUtility.DisplayDialogComplex("Загрузка Разговорника", "Ты можешь добавить данные из файла в Разговорник, а можешь заменить их в нём.", "Добавить", "Отмена", "Заменить");
+            int choose = EditorUtility.DisplayDialogComplex("Р—Р°РіСЂСѓР·РєР° Р Р°Р·РіРѕРІРѕСЂРЅРёРєР°", "РўС‹ РјРѕР¶РµС€СЊ РґРѕР±Р°РІРёС‚СЊ РґР°РЅРЅС‹Рµ РёР· С„Р°Р№Р»Р° РІ Р Р°Р·РіРѕРІРѕСЂРЅРёРє, Р° РјРѕР¶РµС€СЊ Р·Р°РјРµРЅРёС‚СЊ РёС… РІ РЅС‘Рј.", "Р”РѕР±Р°РІРёС‚СЊ", "РћС‚РјРµРЅР°", "Р—Р°РјРµРЅРёС‚СЊ");
             switch (choose)
             {
                 case 0:

@@ -1,4 +1,4 @@
-﻿// Умрике от Смекты )
+// Умрике от Смекты )
 using System;
 using System.Collections.Generic;
 using UnityEngine;

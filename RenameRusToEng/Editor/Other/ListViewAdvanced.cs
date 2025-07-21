@@ -7,10 +7,10 @@ namespace SmectUI
 {
 
     /// <summary>
-    /// Исправленная версия ListView, корректно отображающаяся в инспекторе Unity: при вызове RefreshSize() или Refresh()
-    /// список растягивается по высоте в соответствии с установленными minHeight и maxHeight.
+    /// РСЃРїСЂР°РІР»РµРЅРЅР°СЏ РІРµСЂСЃРёВ¤ ListView, РєРѕСЂСЂРµРєС‚РЅРѕ РѕС‚РѕР±СЂР°Р¶Р°СЋС‰Р°В¤СЃВ¤ РІ РёРЅСЃРїРµРєС‚РѕСЂРµ Unity: РїСЂРё РІС‹Р·РѕРІРµ RefreshSize() РёР»Рё Refresh()
+    /// СЃРїРёСЃРѕРє СЂР°СЃС‚В¤РіРёРІР°РµС‚СЃВ¤ РїРѕ РІС‹СЃРѕС‚Рµ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹РјРё minHeight Рё maxHeight.
     /// </summary>
-    public class ListViewAdvanced : ListView // Исправленная версия ListView, растягивающая его как положено.
+    public class ListViewAdvanced : ListView // В»СЃРїСЂР°РІР»РµРЅРЅР°В¤ РІРµСЂСЃРёВ¤ ListView, СЂР°СЃС‚В¤РіРёРІР°СЋС‰Р°В¤ РµРіРѕ РєР°Рє РїРѕР»РѕР¶РµРЅРѕ.
     {
         public ListViewAdvanced(IList itemsSource, int itemHeight, Func<VisualElement> makeItem, Action<VisualElement, int> bindItem) : base(itemsSource, itemHeight, makeItem, bindItem) { }
 

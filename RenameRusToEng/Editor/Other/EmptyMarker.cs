@@ -5,7 +5,7 @@ namespace SmectUI
 {
 
     /// <summary>
-    /// UI-элемент редактора, выводящий на экран заместо ProvidedBlock слово "пусто" до тех пор, пока у ProvidedBlock не возникнут дети.
+    /// UI-СЌР»РµРјРµРЅС‚ СЂРµРґР°РєС‚РѕСЂР°, РІС‹РІРѕРґСЏС‰РёР№ РЅР° СЌРєСЂР°РЅ Р·Р°РјРµСЃС‚Рѕ ProvidedBlock СЃР»РѕРІРѕ "РїСѓСЃС‚Рѕ" РґРѕ С‚РµС… РїРѕСЂ, РїРѕРєР° Сѓ ProvidedBlock РЅРµ РІРѕР·РЅРёРєРЅСѓС‚ РґРµС‚Рё.
     /// </summary>
     class EmptyMarker : IMGUIContainer
     {
@@ -18,7 +18,7 @@ namespace SmectUI
 
             Add(new TextElement()
             {
-                text = "<пусто>",
+                text = "<РїСѓСЃС‚Рѕ>",
                 style =
                             {
                                 width = ProvidedBlock.style.width,

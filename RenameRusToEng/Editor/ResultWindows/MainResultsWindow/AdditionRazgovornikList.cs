@@ -6,7 +6,7 @@ namespace RenameRusToEng
 {
 
     /// <summary>
-    /// UI-элемент, репрезентирующий список-автодополнение к Разговорнику.
+    /// UI-СЌР»РµРјРµРЅС‚, СЂРµРїСЂРµР·РµРЅС‚РёСЂСѓСЋС‰РёР№ СЃРїРёСЃРѕРє-Р°РІС‚РѕРґРѕРїРѕР»РЅРµРЅРёРµ Рє Р Р°Р·РіРѕРІРѕСЂРЅРёРєСѓ.
     /// </summary>
     class AdditionRazgovornikList : VisualElement
     {
@@ -49,7 +49,7 @@ namespace RenameRusToEng
                 }
             };
 
-            WordsPair testPair = new WordsPair(ListsHeight) { style = { flexShrink = 0 } }; // Для замерки высоты элемента
+            WordsPair testPair = new WordsPair(ListsHeight) { style = { flexShrink = 0 } }; // Р”Р»СЏ Р·Р°РјРµСЂРєРё РІС‹СЃРѕС‚С‹ СЌР»РµРјРµРЅС‚Р°
             testPair.SetWords("test", "test");
             obvodka.Add(testPair);
 

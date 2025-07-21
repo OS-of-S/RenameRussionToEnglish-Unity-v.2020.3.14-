@@ -5,17 +5,17 @@ namespace SmectUI
 {
 
     /// <summary>
-    /// Шаблон для манипуляторов, обеспечивающих драг-н-дроп файлов в GUI-элементах редактора.
+    /// РЁР°Р±Р»РѕРЅ РґР»СЏ РјР°РЅРёРїСѓР»СЏС‚РѕСЂРѕРІ, РѕР±РµСЃРїРµС‡РёРІР°СЋС‰РёС… РґСЂР°Рі-РЅ-РґСЂРѕРї С„Р°Р№Р»РѕРІ РІ GUI-СЌР»РµРјРµРЅС‚Р°С… СЂРµРґР°РєС‚РѕСЂР°.
     /// </summary>
     abstract class FilesDragAndDropManipulator : PointerManipulator
     {
         // https://docs.unity3d.com/6000.1/Documentation/Manual/UIE-drag-across-windows.html#:~:text=From%20the%20menu%2C%20select%20Window,from%20one%20window%20to%20another.
         // https://docs.unity3d.com/2020.1/Documentation/Manual/UIE-Events-DragAndDrop.html
         //
-        // Можно это и в OnGui() проделывать, через
-        // if (Event.current.type == EventType.MouseDrag) и Rect.Contains(Event.current.mousePosition),
-        // но это тогда будет ЕЩЁ ЗАБОРИСТЕЕ (так что предпочтительнее обойтись этими
-        // пятью функциями класса PointerManipulator.)
+        // РњРѕР¶РЅРѕ СЌС‚Рѕ Рё РІ OnGui() РїСЂРѕРґРµР»С‹РІР°С‚СЊ, С‡РµСЂРµР·
+        // if (Event.current.type == EventType.MouseDrag) Рё Rect.Contains(Event.current.mousePosition),
+        // РЅРѕ СЌС‚Рѕ С‚РѕРіРґР° Р±СѓРґРµС‚ Р•Р©РЃ Р—РђР‘РћР РРЎРўР•Р• (С‚Р°Рє С‡С‚Рѕ РїСЂРµРґРїРѕС‡С‚РёС‚РµР»СЊРЅРµРµ РѕР±РѕР№С‚РёСЃСЊ СЌС‚РёРјРё
+        // РїСЏС‚СЊСЋ С„СѓРЅРєС†РёСЏРјРё РєР»Р°СЃСЃР° PointerManipulator.)
 
         bool draging_files = false;
 
@@ -42,7 +42,7 @@ namespace SmectUI
             target.UnregisterCallback<DragExitedEvent>(OnDragExited);
         }
 
-        public abstract bool DragFileFilter(); // Описан в наследниках, т.к. мне нужно два разных подобных класса.
+        public abstract bool DragFileFilter(); // РћРїРёСЃР°РЅ РІ РЅР°СЃР»РµРґРЅРёРєР°С…, С‚.Рє. РјРЅРµ РЅСѓР¶РЅРѕ РґРІР° СЂР°Р·РЅС‹С… РїРѕРґРѕР±РЅС‹С… РєР»Р°СЃСЃР°.
 
         void OnDragEnter(DragEnterEvent _)
         {
@@ -60,7 +60,7 @@ namespace SmectUI
             if (draging_files) DragAndDrop.visualMode = DragAndDropVisualMode.Generic;
         }
 
-        public abstract void OnDragPerform(DragPerformEvent _); // Описан в наследниках, т.к. мне нужно два разных подобных класса.
+        public abstract void OnDragPerform(DragPerformEvent _); // РћРїРёСЃР°РЅ РІ РЅР°СЃР»РµРґРЅРёРєР°С…, С‚.Рє. РјРЅРµ РЅСѓР¶РЅРѕ РґРІР° СЂР°Р·РЅС‹С… РїРѕРґРѕР±РЅС‹С… РєР»Р°СЃСЃР°.
 
         void OnDragExited(DragExitedEvent _)
         {

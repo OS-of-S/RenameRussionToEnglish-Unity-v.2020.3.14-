@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 namespace RenameRusToEng
 {
     /// <summary>
-    /// Элемент UI, отображающий информацию об отдельном шаге алгоритма в окне подробностей.
+    /// Р­Р»РµРјРµРЅС‚ UI, РѕС‚РѕР±СЂР°Р¶Р°СЋС‰РёР№ РёРЅС„РѕСЂРјР°С†РёСЋ РѕР± РѕС‚РґРµР»СЊРЅРѕРј С€Р°РіРµ Р°Р»РіРѕСЂРёС‚РјР° РІ РѕРєРЅРµ РїРѕРґСЂРѕР±РЅРѕСЃС‚РµР№.
     /// </summary>
     class InfoBlock : VisualElement
     {
@@ -44,35 +44,35 @@ namespace RenameRusToEng
                 }
             };
 
-            StepLine = new NumberLine("Шаг", 0);
+            StepLine = new NumberLine("РЁР°Рі", 0);
             obvodka.Add(StepLine);
-            FoundMatch = new SomeTextBox("Вхождение", exemple_info.FoundMatch);
+            FoundMatch = new SomeTextBox("Р’С…РѕР¶РґРµРЅРёРµ", exemple_info.FoundMatch);
             obvodka.Add(FoundMatch);
             if (exemple_info.OriginalMatchElement != null)
             {
-                CorrespondedSubstitution = new SomeTextBox("Замена", exemple_info.CorrespondedSubstitution);
+                CorrespondedSubstitution = new SomeTextBox("Р—Р°РјРµРЅР°", exemple_info.CorrespondedSubstitution);
                 obvodka.Add(CorrespondedSubstitution);
-                original_rus = new SomeTextBox("Оригинальный шаблон вхождения", exemple_info.OriginalMatchElement.original_rus);
+                original_rus = new SomeTextBox("РћСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ С€Р°Р±Р»РѕРЅ РІС…РѕР¶РґРµРЅРёСЏ", exemple_info.OriginalMatchElement.original_rus);
                 obvodka.Add(original_rus);
-                original_eng = new SomeTextBox("Оригинальный шаблон замены", exemple_info.OriginalMatchElement.original_eng);
+                original_eng = new SomeTextBox("РћСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ С€Р°Р±Р»РѕРЅ Р·Р°РјРµРЅС‹", exemple_info.OriginalMatchElement.original_eng);
                 obvodka.Add(original_eng);
             }
-            FoundMatch_extended = new SomeTextBox("Контекст вхождения", exemple_info.FoundMatch_extended);
+            FoundMatch_extended = new SomeTextBox("РљРѕРЅС‚РµРєСЃС‚ РІС…РѕР¶РґРµРЅРёСЏ", exemple_info.FoundMatch_extended);
             obvodka.Add(FoundMatch_extended);
             if (exemple_info.OriginalMatchElement != null)
             {
-                CorrespondedSubstitution_extended = new SomeTextBox("Контекст замены", exemple_info.CorrespondedSubstitution_extended);
+                CorrespondedSubstitution_extended = new SomeTextBox("РљРѕРЅС‚РµРєСЃС‚ Р·Р°РјРµРЅС‹", exemple_info.CorrespondedSubstitution_extended);
                 obvodka.Add(CorrespondedSubstitution_extended);
             }
             if (exemple_info.lineNumber > -1)
             {
                 line = exemple_info.lineNumber + 1;
-                _lineNumber = new NumberLine("Строка", line);
+                _lineNumber = new NumberLine("РЎС‚СЂРѕРєР°", line);
                 obvodka.Add(_lineNumber);
             }
             else line = 1;
             column = exemple_info.columnNumber + 1;
-            _columnNumber = new NumberLine("Символ", column);
+            _columnNumber = new NumberLine("РЎРёРјРІРѕР»", column);
             obvodka.Add(_columnNumber);
             vis_el.Add(obvodka);
             Add(vis_el);
@@ -82,7 +82,7 @@ namespace RenameRusToEng
                 if (parent_block.info.type == ObjectSubstitutionInfo.ObjectType.TEXT)
                 {
                     UnityEngine.Object ass_to_focus = parent_block.GetAssetToFocus();
-                    if (!AssetDatabase.OpenAsset(ass_to_focus, line, column)) Debug.LogError("Не удалось открыть файл " + ass_to_focus);
+                    if (!AssetDatabase.OpenAsset(ass_to_focus, line, column)) Debug.LogError("РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С„Р°Р№Р» " + ass_to_focus);
                 }
                 else parent_block.FocusOnObject();
             });

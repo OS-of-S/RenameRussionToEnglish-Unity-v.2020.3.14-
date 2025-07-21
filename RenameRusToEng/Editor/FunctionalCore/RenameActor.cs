@@ -10,63 +10,63 @@ namespace RenameRusToEng
 {
 
     /// <summary>
-    /// Функциональное ядро Перептолмачивателя (непосредственно алгоритмы поиска и замены).
+    /// Р¤СѓРЅРєС†РёРѕРЅР°Р»СЊРЅРѕРµ СЏРґСЂРѕ РџРµСЂРµРїС‚РѕР»РјР°С‡РёРІР°С‚РµР»СЏ (РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ Р°Р»РіРѕСЂРёС‚РјС‹ РїРѕРёСЃРєР° Рё Р·Р°РјРµРЅС‹).
     /// </summary>
     class RenameActor
     {
 
         /// <summary>
-        /// Для замены кириллицы простым транслитом.
+        /// Р”Р»СЏ Р·Р°РјРµРЅС‹ РєРёСЂРёР»Р»РёС†С‹ РїСЂРѕСЃС‚С‹Рј С‚СЂР°РЅСЃР»РёС‚РѕРј.
         /// </summary>
         static readonly Dictionary<char, string> TranslitDict = new Dictionary<char, string>()
     {
-        {'а', "a" },
-        {'б', "b" },
-        {'в', "v" },
-        {'г', "g" },
-        {'д', "d" },
-        {'е', "e" },
-        {'ё', "yo" },
-        {'ж', "zh" },
-        {'з', "z" },
-        {'и', "i" },
-        {'й', "j" },
-        {'к', "k" },
-        {'л', "l" },
-        {'м', "m" },
-        {'н', "n" },
-        {'о', "o" },
-        {'п', "p" },
-        {'р', "r" },
-        {'с', "s" },
-        {'т', "t" },
-        {'у', "u" },
-        {'ф', "f" },
-        {'х', "h" },
-        {'ц', "c" },
-        {'ч', "ch" },
-        {'ш', "sh" },
-        {'щ', "shch" },
-        {'ъ', "" },
-        {'ы', "y" },
-        {'ь', "" },
-        {'э', "e" },
-        {'ю', "yu" },
-        {'я', "ya" }
+        {'Р°', "a" },
+        {'Р±', "b" },
+        {'РІ', "v" },
+        {'Рі', "g" },
+        {'Рґ', "d" },
+        {'Рµ', "e" },
+        {'С‘', "yo" },
+        {'Р¶', "zh" },
+        {'Р·', "z" },
+        {'Рё', "i" },
+        {'Р№', "j" },
+        {'Рє', "k" },
+        {'Р»', "l" },
+        {'Рј', "m" },
+        {'РЅ', "n" },
+        {'Рѕ', "o" },
+        {'Рї', "p" },
+        {'СЂ', "r" },
+        {'СЃ', "s" },
+        {'С‚', "t" },
+        {'Сѓ', "u" },
+        {'С„', "f" },
+        {'С…', "h" },
+        {'С†', "c" },
+        {'С‡', "ch" },
+        {'С€', "sh" },
+        {'С‰', "shch" },
+        {'СЉ', "" },
+        {'С‹', "y" },
+        {'СЊ', "" },
+        {'СЌ', "e" },
+        {'СЋ', "yu" },
+        {'СЏ', "ya" }
     };
 
-        const string NativeCaps = @"ЁА-Я";
-        const string NativeSmall = @"ёа-я";
-        const string NativeAlphabet = NativeCaps + NativeSmall; // Регулярное выражение для любого символа исходного языка, от которого мы бы хотели избавиться в проекте. (ЁёА-я)
-        const string NativeWord = "[" + NativeAlphabet + "]+"; // Для поиска последовательностей русских символов (не обязательно отдельные слова). Альтернатива: "("+NativePascalWord+")+".
-        const string NativePascalWord = @"(?n)(?<=([^ЁА-Я]|\G))[ЁА-Я]?[ёа-я]+|[ЁА-Я]+(?-n)"; // Для разделения последовательностей русских символов на отдельные слова, если наименование оформлено в PascalCase или просто разделено по регистру. Например - "гусятницаНомерОДИН" будет разделено на "гусятница", "Номер" и "ОДИН".
+        const string NativeCaps = @"РЃРђ-РЇ";
+        const string NativeSmall = @"С‘Р°-СЏ";
+        const string NativeAlphabet = NativeCaps + NativeSmall; // Р РµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РґР»СЏ Р»СЋР±РѕРіРѕ СЃРёРјРІРѕР»Р° РёСЃС…РѕРґРЅРѕРіРѕ СЏР·С‹РєР°, РѕС‚ РєРѕС‚РѕСЂРѕРіРѕ РјС‹ Р±С‹ С…РѕС‚РµР»Рё РёР·Р±Р°РІРёС‚СЊСЃСЏ РІ РїСЂРѕРµРєС‚Рµ. (РЃС‘Рђ-СЏ)
+        const string NativeWord = "[" + NativeAlphabet + "]+"; // Р”Р»СЏ РїРѕРёСЃРєР° РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚РµР№ СЂСѓСЃСЃРєРёС… СЃРёРјРІРѕР»РѕРІ (РЅРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РѕС‚РґРµР»СЊРЅС‹Рµ СЃР»РѕРІР°). РђР»СЊС‚РµСЂРЅР°С‚РёРІР°: "("+NativePascalWord+")+".
+        const string NativePascalWord = @"(?n)(?<=([^РЃРђ-РЇ]|\G))[РЃРђ-РЇ]?[С‘Р°-СЏ]+|[РЃРђ-РЇ]+(?-n)"; // Р”Р»СЏ СЂР°Р·РґРµР»РµРЅРёСЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚РµР№ СЂСѓСЃСЃРєРёС… СЃРёРјРІРѕР»РѕРІ РЅР° РѕС‚РґРµР»СЊРЅС‹Рµ СЃР»РѕРІР°, РµСЃР»Рё РЅР°РёРјРµРЅРѕРІР°РЅРёРµ РѕС„РѕСЂРјР»РµРЅРѕ РІ PascalCase РёР»Рё РїСЂРѕСЃС‚Рѕ СЂР°Р·РґРµР»РµРЅРѕ РїРѕ СЂРµРіРёСЃС‚СЂСѓ. РќР°РїСЂРёРјРµСЂ - "РіСѓСЃСЏС‚РЅРёС†Р°РќРѕРјРµСЂРћР”РРќ" Р±СѓРґРµС‚ СЂР°Р·РґРµР»РµРЅРѕ РЅР° "РіСѓСЃСЏС‚РЅРёС†Р°", "РќРѕРјРµСЂ" Рё "РћР”РРќ".
         const string ForeignPascalWord = @"(?n)(?<=([^A-Z]|\G))[A-Z]?[a-z]+|[A-Z]+(?-n)";
         const string PascalWord = NativePascalWord + "|" + ForeignPascalWord;
         Regex NativeWordRegex = new Regex(NativeWord, RegexOptions.Compiled);
         Regex NativePascalWordRegex = new Regex(NativePascalWord, RegexOptions.Compiled);
         Regex ForeignPascalWordRegex = new Regex(ForeignPascalWord, RegexOptions.Compiled);
         Regex PascalWordRegex = new Regex(PascalWord, RegexOptions.Compiled);
-        Regex AutoFindRegex; // Регулярное выражение для автоматичекого поиска русизмов (зависит от настроек).
+        Regex AutoFindRegex; // Р РµРіСѓР»СЏСЂРЅРѕРµ РІС‹СЂР°Р¶РµРЅРёРµ РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµРєРѕРіРѕ РїРѕРёСЃРєР° СЂСѓСЃРёР·РјРѕРІ (Р·Р°РІРёСЃРёС‚ РѕС‚ РЅР°СЃС‚СЂРѕРµРє).
         Regex BigNativeLetterBRegex = new Regex(@"\G[" + NativeCaps + "]", RegexOptions.Compiled);
         Regex SmallNativeLetterBRegex = new Regex(@"\G[" + NativeSmall + "]", RegexOptions.Compiled);
         Regex BigNativeLetterERegex = new Regex("[" + NativeCaps + @"]\G", RegexOptions.RightToLeft | RegexOptions.Compiled);
@@ -74,21 +74,21 @@ namespace RenameRusToEng
         Regex NativeLetterBRegex = new Regex(@"\G[" + NativeAlphabet + "]", RegexOptions.Compiled);
         Regex NativeLetterERegex = new Regex("[" + NativeAlphabet + @"]\G", RegexOptions.RightToLeft | RegexOptions.Compiled);
         public RenameSettingsWindow root_settings_window;
-        public bool make_changes; // Если false, то программа не будет вносить реальных изменений в файлы проекта, а только найдёт русизмы.
+        public bool make_changes; // Р•СЃР»Рё false, С‚Рѕ РїСЂРѕРіСЂР°РјРјР° РЅРµ Р±СѓРґРµС‚ РІРЅРѕСЃРёС‚СЊ СЂРµР°Р»СЊРЅС‹С… РёР·РјРµРЅРµРЅРёР№ РІ С„Р°Р№Р»С‹ РїСЂРѕРµРєС‚Р°, Р° С‚РѕР»СЊРєРѕ РЅР°Р№РґС‘С‚ СЂСѓСЃРёР·РјС‹.
 
-        public RenameSettingsWindow.RenameSettings current_settings; // Настройки, при которых запущен процесс перетолмачивания (копируются с менюшки).
+        public RenameSettingsWindow.RenameSettings current_settings; // РќР°СЃС‚СЂРѕР№РєРё, РїСЂРё РєРѕС‚РѕСЂС‹С… Р·Р°РїСѓС‰РµРЅ РїСЂРѕС†РµСЃСЃ РїРµСЂРµС‚РѕР»РјР°С‡РёРІР°РЅРёСЏ (РєРѕРїРёСЂСѓСЋС‚СЃСЏ СЃ РјРµРЅСЋС€РєРё).
 
         List<PreparedDictElement> ProvidedRazgovornik = new List<PreparedDictElement>();
         public AutoSortedDict AutoRazgovornik = new AutoSortedDict();
-        Dictionary<string, DictElement> AutoFoundWords = new Dictionary<string, DictElement>(); // Словарь для быстрой проверки наличия слов в списке.
+        Dictionary<string, DictElement> AutoFoundWords = new Dictionary<string, DictElement>(); // РЎР»РѕРІР°СЂСЊ РґР»СЏ Р±С‹СЃС‚СЂРѕР№ РїСЂРѕРІРµСЂРєРё РЅР°Р»РёС‡РёСЏ СЃР»РѕРІ РІ СЃРїРёСЃРєРµ.
 
 
-        public List<ObjectSubstitutionInfo> ProvidedSubstitutions; // Список предусмотренных замен (зафиксированы пользователем в Разговорнике).
-        public List<ObjectSubstitutionInfo> AdditionSubstitutions; // Список непредусмотренных замен (обнаруженные последовательности русских символов, не покрытые Разговорником).
+        public List<ObjectSubstitutionInfo> ProvidedSubstitutions; // РЎРїРёСЃРѕРє РїСЂРµРґСѓСЃРјРѕС‚СЂРµРЅРЅС‹С… Р·Р°РјРµРЅ (Р·Р°С„РёРєСЃРёСЂРѕРІР°РЅС‹ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј РІ Р Р°Р·РіРѕРІРѕСЂРЅРёРєРµ).
+        public List<ObjectSubstitutionInfo> AdditionSubstitutions; // РЎРїРёСЃРѕРє РЅРµРїСЂРµРґСѓСЃРјРѕС‚СЂРµРЅРЅС‹С… Р·Р°РјРµРЅ (РѕР±РЅР°СЂСѓР¶РµРЅРЅС‹Рµ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё СЂСѓСЃСЃРєРёС… СЃРёРјРІРѕР»РѕРІ, РЅРµ РїРѕРєСЂС‹С‚С‹Рµ Р Р°Р·РіРѕРІРѕСЂРЅРёРєРѕРј).
 
 
         /// <summary>
-        /// Функция, дополняющая незавершённый отчёт о заменах более полным контекстом замены и корректирующая номер символа начала вхождения в тексте, если тот был изменён.
+        /// Р¤СѓРЅРєС†РёСЏ, РґРѕРїРѕР»РЅСЏСЋС‰Р°СЏ РЅРµР·Р°РІРµСЂС€С‘РЅРЅС‹Р№ РѕС‚С‡С‘С‚ Рѕ Р·Р°РјРµРЅР°С… Р±РѕР»РµРµ РїРѕР»РЅС‹Рј РєРѕРЅС‚РµРєСЃС‚РѕРј Р·Р°РјРµРЅС‹ Рё РєРѕСЂСЂРµРєС‚РёСЂСѓСЋС‰Р°СЏ РЅРѕРјРµСЂ СЃРёРјРІРѕР»Р° РЅР°С‡Р°Р»Р° РІС…РѕР¶РґРµРЅРёСЏ РІ С‚РµРєСЃС‚Рµ, РµСЃР»Рё С‚РѕС‚ Р±С‹Р» РёР·РјРµРЅС‘РЅ.
         /// </summary>
         List<LogResults> PrepareOneStringLogs(List<LastMatchesInfo> MatchesLogInfos, string input, string output)
         {
@@ -121,7 +121,7 @@ namespace RenameRusToEng
 
 
         /// <summary>
-        /// Простой транслит.
+        /// РџСЂРѕСЃС‚РѕР№ С‚СЂР°РЅСЃР»РёС‚.
         /// </summary>
         ReplaceResults translit_text(string input)
         {
@@ -160,7 +160,7 @@ namespace RenameRusToEng
             }
             else output = input;
 
-            // Результат:
+            // Р РµР·СѓР»СЊС‚Р°С‚:
             ReplaceResults results = new ReplaceResults();
             results.output = output;
             results.Logs = PrepareOneStringLogs(_nowProcessedMatches, input, output);
@@ -168,7 +168,7 @@ namespace RenameRusToEng
         }
 
         /// <summary>
-        /// Автоматическое сопостовление регистров совпадения и замены (например, если поиск замен не зависит от регистра, ведь нам желательно сохранить формат).
+        /// РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ СЃРѕРїРѕСЃС‚РѕРІР»РµРЅРёРµ СЂРµРіРёСЃС‚СЂРѕРІ СЃРѕРІРїР°РґРµРЅРёСЏ Рё Р·Р°РјРµРЅС‹ (РЅР°РїСЂРёРјРµСЂ, РµСЃР»Рё РїРѕРёСЃРє Р·Р°РјРµРЅ РЅРµ Р·Р°РІРёСЃРёС‚ РѕС‚ СЂРµРіРёСЃС‚СЂР°, РІРµРґСЊ РЅР°Рј Р¶РµР»Р°С‚РµР»СЊРЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ С„РѕСЂРјР°С‚).
         /// </summary>
         string MaintainLettersCase(string original, string replacement)
         {
@@ -179,12 +179,12 @@ namespace RenameRusToEng
             int section_start = 0;
             MatchCollection PascalsOriginal = PascalWordRegex.Matches(original);
             MatchCollection PascalsReplacement = PascalWordRegex.Matches(replacement);
-            if (PascalsOriginal.Count == 0) return replacement; // На случай если не с чем сравнить.
+            if (PascalsOriginal.Count == 0) return replacement; // РќР° СЃР»СѓС‡Р°Р№ РµСЃР»Рё РЅРµ СЃ С‡РµРј СЃСЂР°РІРЅРёС‚СЊ.
 
             string MaintainLettersCaseSimple(string _original, string _replacement)
             {
-                // ВЫЯСНЯЕМ ТИП ОФОРМЛЕНИЯ СЛОВА _original:
-                int type; // 0 = все буквы маленькие, 1 = первая буква большая, 2 = все буквы большие, 3 = другое
+                // Р’Р«РЇРЎРќРЇР•Рњ РўРРџ РћР¤РћР РњР›Р•РќРРЇ РЎР›РћР’Рђ _original:
+                int type; // 0 = РІСЃРµ Р±СѓРєРІС‹ РјР°Р»РµРЅСЊРєРёРµ, 1 = РїРµСЂРІР°СЏ Р±СѓРєРІР° Р±РѕР»СЊС€Р°СЏ, 2 = РІСЃРµ Р±СѓРєРІС‹ Р±РѕР»СЊС€РёРµ, 3 = РґСЂСѓРіРѕРµ
                 bool allUpper = true;
                 bool allLower = true;
                 for (int i = _original.Length - 1; i > 0; i--)
@@ -203,7 +203,7 @@ namespace RenameRusToEng
                     else type = 3;
                 }
 
-                // МЕНЯЕМ _replacement В СООТВЕТСТВИИ С ТИПОМ:
+                // РњР•РќРЇР•Рњ _replacement Р’ РЎРћРћРўР’Р•РўРЎРўР’РР РЎ РўРРџРћРњ:
                 switch (type)
                 {
                     case 0:
@@ -225,10 +225,10 @@ namespace RenameRusToEng
                 switch (current_settings.CaseMaintainType)
                 {
                     case RenameSettingsWindow.CaseMaintainEnum.PASCALCASE_LAST_STABLE:
-                        original_i = Math.Min(i, PascalsOriginal.Count - 1); // Если заменяемая последовательность делится при помощи PascalCase на большее количество слов чем в оригинальной строке, то последние слова заменяемой последовательности форматируются в соответствии с форматом последнего слова из оригинала.
+                        original_i = Math.Min(i, PascalsOriginal.Count - 1); // Р•СЃР»Рё Р·Р°РјРµРЅСЏРµРјР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РґРµР»РёС‚СЃСЏ РїСЂРё РїРѕРјРѕС‰Рё PascalCase РЅР° Р±РѕР»СЊС€РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР»РѕРІ С‡РµРј РІ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕР№ СЃС‚СЂРѕРєРµ, С‚Рѕ РїРѕСЃР»РµРґРЅРёРµ СЃР»РѕРІР° Р·Р°РјРµРЅСЏРµРјРѕР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё С„РѕСЂРјР°С‚РёСЂСѓСЋС‚СЃСЏ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ С„РѕСЂРјР°С‚РѕРј РїРѕСЃР»РµРґРЅРµРіРѕ СЃР»РѕРІР° РёР· РѕСЂРёРіРёРЅР°Р»Р°.
                         break;
                     case RenameSettingsWindow.CaseMaintainEnum.PASCALCASE_ROUND:
-                        original_i = i % PascalsOriginal.Count; // Если заменяемая последовательность делится при помощи PascalCase на большее количество слов чем в оригинальной строке, то последние слова заменяемой последовательности форматируются в соответствии с первыми словами из оригинала по кругу.
+                        original_i = i % PascalsOriginal.Count; // Р•СЃР»Рё Р·Р°РјРµРЅСЏРµРјР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РґРµР»РёС‚СЃСЏ РїСЂРё РїРѕРјРѕС‰Рё PascalCase РЅР° Р±РѕР»СЊС€РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ СЃР»РѕРІ С‡РµРј РІ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕР№ СЃС‚СЂРѕРєРµ, С‚Рѕ РїРѕСЃР»РµРґРЅРёРµ СЃР»РѕРІР° Р·Р°РјРµРЅСЏРµРјРѕР№ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё С„РѕСЂРјР°С‚РёСЂСѓСЋС‚СЃСЏ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РїРµСЂРІС‹РјРё СЃР»РѕРІР°РјРё РёР· РѕСЂРёРіРёРЅР°Р»Р° РїРѕ РєСЂСѓРіСѓ.
                         break;
                     default:
                         original_i = Math.Min(i, PascalsOriginal.Count - 1);
@@ -250,7 +250,7 @@ namespace RenameRusToEng
 
 
         /// <summary>
-        /// Вспомогательная функция (производит замену со сбором информации об оных во внешних списках; используется для формирования MatchEvaluator в обрабатывающих текст функциях).
+        /// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅР°СЏ С„СѓРЅРєС†РёСЏ (РїСЂРѕРёР·РІРѕРґРёС‚ Р·Р°РјРµРЅСѓ СЃРѕ СЃР±РѕСЂРѕРј РёРЅС„РѕСЂРјР°С†РёРё РѕР± РѕРЅС‹С… РІРѕ РІРЅРµС€РЅРёС… СЃРїРёСЃРєР°С…; РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ MatchEvaluator РІ РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС‰РёС… С‚РµРєСЃС‚ С„СѓРЅРєС†РёСЏС…).
         /// </summary>
         string CollectMatchesAndReplace(Match match, List<LastMatchesInfo> _nowProcessedMatches, PreparedDictElement _nowProcessedDictEl)
         {
@@ -262,10 +262,10 @@ namespace RenameRusToEng
         }
 
         /// <summary>
-        /// Формирует MatchEvaluator, производящий замены по Разговорнику со сбором информации об оных.
+        /// Р¤РѕСЂРјРёСЂСѓРµС‚ MatchEvaluator, РїСЂРѕРёР·РІРѕРґСЏС‰РёР№ Р·Р°РјРµРЅС‹ РїРѕ Р Р°Р·РіРѕРІРѕСЂРЅРёРєСѓ СЃРѕ СЃР±РѕСЂРѕРј РёРЅС„РѕСЂРјР°С†РёРё РѕР± РѕРЅС‹С….
         /// </summary>
-        /// <param name="_nowProcessedMatches">Список, в который будет собираться информация о найденных совпадениях (обязан быть "локальным" для каждой использующей его функции, чтобы код был чётким и последовательным, а ещё так будет потенциал для распараллеливания).</param>
-        /// <param name="_nowProcessedDictEl">Элемент Разговорника (введённый пользователем или сформированный алгоритмом автоматически), соответствующий обрабатываемой замене.</param>
+        /// <param name="_nowProcessedMatches">РЎРїРёСЃРѕРє, РІ РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ СЃРѕР±РёСЂР°С‚СЊСЃСЏ РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РЅР°Р№РґРµРЅРЅС‹С… СЃРѕРІРїР°РґРµРЅРёСЏС… (РѕР±СЏР·Р°РЅ Р±С‹С‚СЊ "Р»РѕРєР°Р»СЊРЅС‹Рј" РґР»СЏ РєР°Р¶РґРѕР№ РёСЃРїРѕР»СЊР·СѓСЋС‰РµР№ РµРіРѕ С„СѓРЅРєС†РёРё, С‡С‚РѕР±С‹ РєРѕРґ Р±С‹Р» С‡С‘С‚РєРёРј Рё РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅС‹Рј, Р° РµС‰С‘ С‚Р°Рє Р±СѓРґРµС‚ РїРѕС‚РµРЅС†РёР°Р» РґР»СЏ СЂР°СЃРїР°СЂР°Р»Р»РµР»РёРІР°РЅРёСЏ).</param>
+        /// <param name="_nowProcessedDictEl">Р­Р»РµРјРµРЅС‚ Р Р°Р·РіРѕРІРѕСЂРЅРёРєР° (РІРІРµРґС‘РЅРЅС‹Р№ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј РёР»Рё СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅС‹Р№ Р°Р»РіРѕСЂРёС‚РјРѕРј Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё), СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ РѕР±СЂР°Р±Р°С‚С‹РІР°РµРјРѕР№ Р·Р°РјРµРЅРµ.</param>
         MatchEvaluator MakeProcessMatchesEvaulator(List<LastMatchesInfo> _nowProcessedMatches, PreparedDictElement _nowProcessedDictEl)
         {
             return new MatchEvaluator((Match match) => CollectMatchesAndReplace(match, _nowProcessedMatches, _nowProcessedDictEl));
@@ -281,7 +281,7 @@ namespace RenameRusToEng
             {
                 //Debug.Log(RElement.original_rus+ "     " + RElement.original_eng);
                 List<LastMatchesInfo> _nowProcessedMatches = new List<LastMatchesInfo>();
-                MatchEvaluator evaluator = MakeProcessMatchesEvaulator(_nowProcessedMatches, RElement); //В этом эвалуаторе пополняется NowProcessedMatches.
+                MatchEvaluator evaluator = MakeProcessMatchesEvaulator(_nowProcessedMatches, RElement); //Р’ СЌС‚РѕРј СЌРІР°Р»СѓР°С‚РѕСЂРµ РїРѕРїРѕР»РЅСЏРµС‚СЃСЏ NowProcessedMatches.
                 output = RElement.Regex_rus.Replace(input, evaluator);
 
                 CurrentLogs.AddRange(PrepareOneStringLogs(_nowProcessedMatches, input, output));
@@ -297,7 +297,7 @@ namespace RenameRusToEng
 
 
         /// <summary>
-        /// Согласно выбранному режиму обрабатывает конкретное вхождение match автоматически найденного русизма и сохраняет информацию о проделанных действиях.
+        /// РЎРѕРіР»Р°СЃРЅРѕ РІС‹Р±СЂР°РЅРЅРѕРјСѓ СЂРµР¶РёРјСѓ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РєРѕРЅРєСЂРµС‚РЅРѕРµ РІС…РѕР¶РґРµРЅРёРµ match Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РЅР°Р№РґРµРЅРЅРѕРіРѕ СЂСѓСЃРёР·РјР° Рё СЃРѕС…СЂР°РЅСЏРµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёСЏС….
         /// </summary>
         string CollectAdditionalWordsAndReplace(Match match, List<LastMatchesInfo> _nowProcessedMatches)
         {
@@ -314,13 +314,13 @@ namespace RenameRusToEng
                 string eng = "";
                 switch (current_settings.user_type)
                 {
-                    case RenameSettingsWindow.UserType.RAZGOVORNIK: // Просто Разговорник (без доп-замен, но с поиском слов).
-                        eng = match.Value; // Дублирую слово в колонку разговорника, на случай если пользователь не захочет его заменять.
+                    case RenameSettingsWindow.UserType.RAZGOVORNIK: // РџСЂРѕСЃС‚Рѕ Р Р°Р·РіРѕРІРѕСЂРЅРёРє (Р±РµР· РґРѕРї-Р·Р°РјРµРЅ, РЅРѕ СЃ РїРѕРёСЃРєРѕРј СЃР»РѕРІ).
+                        eng = match.Value; // Р”СѓР±Р»РёСЂСѓСЋ СЃР»РѕРІРѕ РІ РєРѕР»РѕРЅРєСѓ СЂР°Р·РіРѕРІРѕСЂРЅРёРєР°, РЅР° СЃР»СѓС‡Р°Р№ РµСЃР»Рё РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ РЅРµ Р·Р°С…РѕС‡РµС‚ РµРіРѕ Р·Р°РјРµРЅСЏС‚СЊ.
                         break;
-                        //case RenameSettingsWindow.UserType.RAZGOVORNIK_TRANSLATE: // Разговорник + переводчик
-                        //eng = Получить_из_переводчика(match.Value);
+                        //case RenameSettingsWindow.UserType.RAZGOVORNIK_TRANSLATE: // Р Р°Р·РіРѕРІРѕСЂРЅРёРє + РїРµСЂРµРІРѕРґС‡РёРє
+                        //eng = РџРѕР»СѓС‡РёС‚СЊ_РёР·_РїРµСЂРµРІРѕРґС‡РёРєР°(match.Value);
                         //eng = MaintainLettersCase(match.Value, eng);
-                        //eng = eng.Replace(" ", ""); // Так как в любом случае в найденной оригинальной строке не было пробелов, а автопереводчик мог их добавить.
+                        //eng = eng.Replace(" ", ""); // РўР°Рє РєР°Рє РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ РІ РЅР°Р№РґРµРЅРЅРѕР№ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕР№ СЃС‚СЂРѕРєРµ РЅРµ Р±С‹Р»Рѕ РїСЂРѕР±РµР»РѕРІ, Р° Р°РІС‚РѕРїРµСЂРµРІРѕРґС‡РёРє РјРѕРі РёС… РґРѕР±Р°РІРёС‚СЊ.
                         //if (ReplaceDashes) eng = eng.Replace("-", "_");
                         //break;
                 }
@@ -347,9 +347,9 @@ namespace RenameRusToEng
         }
 
         /// <summary>
-        /// Формирует MatchEvaluator, производящий замены (при необходимости!) и сбор информации об оных автоматически найденных вхождений.
+        /// Р¤РѕСЂРјРёСЂСѓРµС‚ MatchEvaluator, РїСЂРѕРёР·РІРѕРґСЏС‰РёР№ Р·Р°РјРµРЅС‹ (РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё!) Рё СЃР±РѕСЂ РёРЅС„РѕСЂРјР°С†РёРё РѕР± РѕРЅС‹С… Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РЅР°Р№РґРµРЅРЅС‹С… РІС…РѕР¶РґРµРЅРёР№.
         /// </summary>
-        /// /// <param name="_nowProcessedMatches">Список, в который будет собираться информация о найденных совпадениях (обязан быть "локальным" для каждой использующей его функции, чтобы код был чётким и последовательным, а ещё так будет потенциал для распараллеливания).</param>
+        /// /// <param name="_nowProcessedMatches">РЎРїРёСЃРѕРє, РІ РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ СЃРѕР±РёСЂР°С‚СЊСЃСЏ РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РЅР°Р№РґРµРЅРЅС‹С… СЃРѕРІРїР°РґРµРЅРёСЏС… (РѕР±СЏР·Р°РЅ Р±С‹С‚СЊ "Р»РѕРєР°Р»СЊРЅС‹Рј" РґР»СЏ РєР°Р¶РґРѕР№ РёСЃРїРѕР»СЊР·СѓСЋС‰РµР№ РµРіРѕ С„СѓРЅРєС†РёРё, С‡С‚РѕР±С‹ РєРѕРґ Р±С‹Р» С‡С‘С‚РєРёРј Рё РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅС‹Рј, Р° РµС‰С‘ С‚Р°Рє Р±СѓРґРµС‚ РїРѕС‚РµРЅС†РёР°Р» РґР»СЏ СЂР°СЃРїР°СЂР°Р»Р»РµР»РёРІР°РЅРёСЏ).</param>
         MatchEvaluator MakeProcessAdditionalWordsEvaulator(List<LastMatchesInfo> _nowProcessedMatches)
         {
             return new MatchEvaluator((Match match) => CollectAdditionalWordsAndReplace(match, _nowProcessedMatches));
@@ -357,7 +357,7 @@ namespace RenameRusToEng
 
 
         /// <summary>
-        /// Автоматически собирает русизмы в тексте и заменяет их, согласно выбранному режиму. (Второй этап работы Перептолмачивателя.)
+        /// РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРё СЃРѕР±РёСЂР°РµС‚ СЂСѓСЃРёР·РјС‹ РІ С‚РµРєСЃС‚Рµ Рё Р·Р°РјРµРЅСЏРµС‚ РёС…, СЃРѕРіР»Р°СЃРЅРѕ РІС‹Р±СЂР°РЅРЅРѕРјСѓ СЂРµР¶РёРјСѓ. (Р’С‚РѕСЂРѕР№ СЌС‚Р°Рї СЂР°Р±РѕС‚С‹ РџРµСЂРµРїС‚РѕР»РјР°С‡РёРІР°С‚РµР»СЏ.)
         /// </summary>
         ReplaceResults ReplaceWithWords(string input)
         {
@@ -365,7 +365,7 @@ namespace RenameRusToEng
             string output;
             List<LastMatchesInfo> _nowProcessedMatches = new List<LastMatchesInfo>();
 
-            MatchEvaluator evaluator = MakeProcessAdditionalWordsEvaulator(_nowProcessedMatches); //В этом эвалуаторе пополняется NowProcessedMatches.
+            MatchEvaluator evaluator = MakeProcessAdditionalWordsEvaulator(_nowProcessedMatches); //Р’ СЌС‚РѕРј СЌРІР°Р»СѓР°С‚РѕСЂРµ РїРѕРїРѕР»РЅСЏРµС‚СЃСЏ NowProcessedMatches.
 
             output = AutoFindRegex.Replace(input, evaluator);
 
@@ -379,7 +379,7 @@ namespace RenameRusToEng
 
 
         /// <summary>
-        /// Получает на вход текст. Обрабатывает его согласно настройкам Перептолмачивателя. Возвращает результат с отчётом о проделанных действиях.
+        /// РџРѕР»СѓС‡Р°РµС‚ РЅР° РІС…РѕРґ С‚РµРєСЃС‚. РћР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РµРіРѕ СЃРѕРіР»Р°СЃРЅРѕ РЅР°СЃС‚СЂРѕР№РєР°Рј РџРµСЂРµРїС‚РѕР»РјР°С‡РёРІР°С‚РµР»СЏ. Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ СЃ РѕС‚С‡С‘С‚РѕРј Рѕ РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёСЏС….
         /// </summary>
         ReplaceResults process_text(string text)
         {
@@ -395,11 +395,11 @@ namespace RenameRusToEng
                 results.Logs.AddRange(partitial_res.Logs);
                 text = partitial_res.output;
             }
-            else // Режимы, связанные с Разговорником
+            else // Р РµР¶РёРјС‹, СЃРІСЏР·Р°РЅРЅС‹Рµ СЃ Р Р°Р·РіРѕРІРѕСЂРЅРёРєРѕРј
             {
-                // Алгоритм следующий:
-                // 1) Пробегается пользовательский Разговорник.
-                // 2) Ищутся не указанные в Разговорнике слова, которые обрабатываются соответственно режиму.
+                // РђР»РіРѕСЂРёС‚Рј СЃР»РµРґСѓСЋС‰РёР№:
+                // 1) РџСЂРѕР±РµРіР°РµС‚СЃСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёР№ Р Р°Р·РіРѕРІРѕСЂРЅРёРє.
+                // 2) РС‰СѓС‚СЃСЏ РЅРµ СѓРєР°Р·Р°РЅРЅС‹Рµ РІ Р Р°Р·РіРѕРІРѕСЂРЅРёРєРµ СЃР»РѕРІР°, РєРѕС‚РѕСЂС‹Рµ РѕР±СЂР°Р±Р°С‚С‹РІР°СЋС‚СЃСЏ СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ СЂРµР¶РёРјСѓ.
 
                 partitial_res = ReplaceWithRazgovornik(text);
                 results.Logs.AddRange(partitial_res.Logs);
@@ -414,7 +414,7 @@ namespace RenameRusToEng
                 }
                 else
                 {
-                    partitial_res = ReplaceWithWords(text); // Остальные режимы внутри.
+                    partitial_res = ReplaceWithWords(text); // РћСЃС‚Р°Р»СЊРЅС‹Рµ СЂРµР¶РёРјС‹ РІРЅСѓС‚СЂРё.
                     results.AdditionLogs.AddRange(partitial_res.Logs);
                     text = partitial_res.output;
                 }
@@ -425,17 +425,17 @@ namespace RenameRusToEng
         }
 
         /// <summary>
-        /// Вспомогательный класс для рекурсивного сбора данных об обработанных объектах (файлах, папках, GameObject'ах, и т.д.)
+        /// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЂРµРєСѓСЂСЃРёРІРЅРѕРіРѕ СЃР±РѕСЂР° РґР°РЅРЅС‹С… РѕР± РѕР±СЂР°Р±РѕС‚Р°РЅРЅС‹С… РѕР±СЉРµРєС‚Р°С… (С„Р°Р№Р»Р°С…, РїР°РїРєР°С…, GameObject'Р°С…, Рё С‚.Рґ.)
         /// </summary>
         private class ObjectsSubstitutionResults
         {
-            public List<ObjectSubstitutionInfo> main_info = new List<ObjectSubstitutionInfo>(); // Соответствует ProvidedSubstitutions.
-            public List<ObjectSubstitutionInfo> addition_info = new List<ObjectSubstitutionInfo>(); // Соответствует AdditionSubstitution.
+            public List<ObjectSubstitutionInfo> main_info = new List<ObjectSubstitutionInfo>(); // РЎРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ ProvidedSubstitutions.
+            public List<ObjectSubstitutionInfo> addition_info = new List<ObjectSubstitutionInfo>(); // РЎРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ AdditionSubstitution.
         }
 
 
         /// <summary>
-        /// Обрабатывает файл скрипта. Возвращает результат с отчётом о проделанных действиях.
+        /// РћР±СЂР°Р±Р°С‚С‹РІР°РµС‚ С„Р°Р№Р» СЃРєСЂРёРїС‚Р°. Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ СЃ РѕС‚С‡С‘С‚РѕРј Рѕ РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёСЏС….
         /// </summary>
         ReplaceResults process_script(MonoScript script_to_process)
         {
@@ -476,7 +476,7 @@ namespace RenameRusToEng
 
 
         /// <summary>
-        /// Обрабатывает GameObject'ы. Возвращает результат с отчётом о проделанных действиях.
+        /// РћР±СЂР°Р±Р°С‚С‹РІР°РµС‚ GameObject'С‹. Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ СЃ РѕС‚С‡С‘С‚РѕРј Рѕ РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёСЏС….
         /// </summary>
         ObjectsSubstitutionResults process_gameobjects(GameObject[] objects_to_process)
         {
@@ -489,7 +489,7 @@ namespace RenameRusToEng
                 obj_main_info.displayed_text = obj.name;
                 obj_addition_info.displayed_text = obj.name;
 
-                //Если префаб: (обрабатываем до обработки имени, т.к. иначе имя обнуляется)
+                //Р•СЃР»Рё РїСЂРµС„Р°Р±: (РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РґРѕ РѕР±СЂР°Р±РѕС‚РєРё РёРјРµРЅРё, С‚.Рє. РёРЅР°С‡Рµ РёРјСЏ РѕР±РЅСѓР»СЏРµС‚СЃСЏ)
                 if (current_settings.recursive_prefs && PrefabUtility.IsAnyPrefabInstanceRoot(obj))//obj.hideFlags == HideFlags.HideInHierarchy)
                 {
                     GameObject pref_obj = PrefabUtility.GetCorrespondingObjectFromOriginalSource(obj);
@@ -497,7 +497,7 @@ namespace RenameRusToEng
                     if (pref_info.main_info.Count > 0)
                     {
                         ObjectSubstitutionInfo pref_root = new ObjectSubstitutionInfo(pref_obj, 0);
-                        pref_root.displayed_text = "Исходный префаб";
+                        pref_root.displayed_text = "РСЃС…РѕРґРЅС‹Р№ РїСЂРµС„Р°Р±";
                         pref_root.Childrens = pref_info.main_info;
                         obj_main_info.Childrens.Add(pref_root);
                     }
@@ -505,13 +505,13 @@ namespace RenameRusToEng
                     if (pref_info.addition_info.Count > 0)
                     {
                         ObjectSubstitutionInfo pref_root = new ObjectSubstitutionInfo(pref_obj, 0);
-                        pref_root.displayed_text = "Исходный префаб";
+                        pref_root.displayed_text = "РСЃС…РѕРґРЅС‹Р№ РїСЂРµС„Р°Р±";
                         pref_root.Childrens = pref_info.addition_info;
                         obj_addition_info.Childrens.Add(pref_root);
                     }
                 }
 
-                //Обработка имени:
+                //РћР±СЂР°Р±РѕС‚РєР° РёРјРµРЅРё:
                 ReplaceResults new_name_info = process_text(obj.name);
                 obj_main_info.Details.AddRange(new_name_info.Logs);
                 obj_addition_info.Details.AddRange(new_name_info.AdditionLogs);
@@ -528,14 +528,14 @@ namespace RenameRusToEng
                     obj.name = new_name_info.output;
                 }
 
-                //Дети:
+                //Р”РµС‚Рё:
                 GameObject[] childrens = new GameObject[obj.transform.childCount];
                 for (int i = 0; i < childrens.Length; i++) childrens[i] = obj.transform.GetChild(i).gameObject;
                 ObjectsSubstitutionResults childrens_info = process_gameobjects(childrens);
                 obj_main_info.Childrens.AddRange(childrens_info.main_info);
                 obj_addition_info.Childrens.AddRange(childrens_info.addition_info);
 
-                //Добавление (или не добавление) в результат:
+                //Р”РѕР±Р°РІР»РµРЅРёРµ (РёР»Рё РЅРµ РґРѕР±Р°РІР»РµРЅРёРµ) РІ СЂРµР·СѓР»СЊС‚Р°С‚:
                 if (obj_main_info.Details.Count > 0 || obj_main_info.Childrens.Count > 0)
                     result.main_info.Add(obj_main_info);
                 if (obj_addition_info.Details.Count > 0 || obj_addition_info.Childrens.Count > 0)
@@ -547,7 +547,7 @@ namespace RenameRusToEng
 
 
         /// <summary>
-        /// Обрабатывает игровую сцену. Возвращает результат с отчётом о проделанных действиях.
+        /// РћР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РёРіСЂРѕРІСѓСЋ СЃС†РµРЅСѓ. Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ СЃ РѕС‚С‡С‘С‚РѕРј Рѕ РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёСЏС….
         /// </summary>
         ObjectsSubstitutionResults process_scene(SceneAsset scene_to_process)
         {
@@ -560,7 +560,7 @@ namespace RenameRusToEng
             {
                 bool Success = EditorSceneManager.SaveScene(scene, path);
                 if (!Success)
-                    Debug.LogError("Не удалось сохранить изменения в сцене " + path);
+                    Debug.LogError("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ РёР·РјРµРЅРµРЅРёСЏ РІ СЃС†РµРЅРµ " + path);
             }
 
             EditorSceneManager.CloseScene(scene, true);
@@ -569,7 +569,7 @@ namespace RenameRusToEng
         }
 
         /// <summary>
-        /// Обрабатывает префаб. Возвращает результат с отчётом о проделанных действиях.
+        /// РћР±СЂР°Р±Р°С‚С‹РІР°РµС‚ РїСЂРµС„Р°Р±. Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ СЃ РѕС‚С‡С‘С‚РѕРј Рѕ РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёСЏС….
         /// </summary>
         ObjectsSubstitutionResults process_prefab(GameObject prefab_to_process)
         {
@@ -577,7 +577,7 @@ namespace RenameRusToEng
             var root_gameobject = PrefabUtility.LoadPrefabContents(path);
 
             GameObject[] childrens = new GameObject[root_gameobject.transform.childCount];
-            // Обрабатываем сразу детей по двум причинам: имя корневого объекта в любом случае неизменимо и является именем файла префаба, и 2) мы должны избежать зацикленности при рекурсивной обработке префабов.
+            // РћР±СЂР°Р±Р°С‚С‹РІР°РµРј СЃСЂР°Р·Сѓ РґРµС‚РµР№ РїРѕ РґРІСѓРј РїСЂРёС‡РёРЅР°Рј: РёРјСЏ РєРѕСЂРЅРµРІРѕРіРѕ РѕР±СЉРµРєС‚Р° РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ РЅРµРёР·РјРµРЅРёРјРѕ Рё СЏРІР»СЏРµС‚СЃСЏ РёРјРµРЅРµРј С„Р°Р№Р»Р° РїСЂРµС„Р°Р±Р°, Рё 2) РјС‹ РґРѕР»Р¶РЅС‹ РёР·Р±РµР¶Р°С‚СЊ Р·Р°С†РёРєР»РµРЅРЅРѕСЃС‚Рё РїСЂРё СЂРµРєСѓСЂСЃРёРІРЅРѕР№ РѕР±СЂР°Р±РѕС‚РєРµ РїСЂРµС„Р°Р±РѕРІ.
             for (int i = 0; i < childrens.Length; i++) childrens[i] = root_gameobject.transform.GetChild(i).gameObject;
             ObjectsSubstitutionResults result = process_gameobjects(childrens);
 
@@ -586,7 +586,7 @@ namespace RenameRusToEng
                 bool Success;
                 PrefabUtility.SaveAsPrefabAsset(root_gameobject, path, out Success);
                 if (!Success)
-                    Debug.LogError("Не удалось сохранить изменения в префабе " + path);
+                    Debug.LogError("РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ РёР·РјРµРЅРµРЅРёСЏ РІ РїСЂРµС„Р°Р±Рµ " + path);
             }
 
             PrefabUtility.UnloadPrefabContents(root_gameobject);
@@ -595,23 +595,23 @@ namespace RenameRusToEng
         }
 
         /// <summary>
-        ///  Возвращает все ассеты внутри папки (файлы и папки, учтённые в AssetDatabase) без рекурисвого просмотра подпапок.
+        ///  Р’РѕР·РІСЂР°С‰Р°РµС‚ РІСЃРµ Р°СЃСЃРµС‚С‹ РІРЅСѓС‚СЂРё РїР°РїРєРё (С„Р°Р№Р»С‹ Рё РїР°РїРєРё, СѓС‡С‚С‘РЅРЅС‹Рµ РІ AssetDatabase) Р±РµР· СЂРµРєСѓСЂРёСЃРІРѕРіРѕ РїСЂРѕСЃРјРѕС‚СЂР° РїРѕРґРїР°РїРѕРє.
         /// </summary>
         List<UnityEngine.Object> GetFolderContents(string folder_path)
         {
             List<UnityEngine.Object> Childrens = new List<UnityEngine.Object>();
-            foreach (string raw_child_path in Directory.GetFileSystemEntries(folder_path)) // На форумах пишут, что это может сломаться, если в названии ассетов встретится слово Assets (но альтернативы гораздо хуже...)
+            foreach (string raw_child_path in Directory.GetFileSystemEntries(folder_path)) // РќР° С„РѕСЂСѓРјР°С… РїРёС€СѓС‚, С‡С‚Рѕ СЌС‚Рѕ РјРѕР¶РµС‚ СЃР»РѕРјР°С‚СЊСЃСЏ, РµСЃР»Рё РІ РЅР°Р·РІР°РЅРёРё Р°СЃСЃРµС‚РѕРІ РІСЃС‚СЂРµС‚РёС‚СЃСЏ СЃР»РѕРІРѕ Assets (РЅРѕ Р°Р»СЊС‚РµСЂРЅР°С‚РёРІС‹ РіРѕСЂР°Р·РґРѕ С…СѓР¶Рµ...)
             {
                 string child_path = raw_child_path.Replace("\\", "/");
                 var child_obj = AssetDatabase.LoadAssetAtPath(child_path, AssetDatabase.GetMainAssetTypeAtPath(child_path));
-                if (child_obj != null) Childrens.Add(child_obj); // Не уверен, учитывает ли это все исключения, но файлы .meta считываются как null
+                if (child_obj != null) Childrens.Add(child_obj); // РќРµ СѓРІРµСЂРµРЅ, СѓС‡РёС‚С‹РІР°РµС‚ Р»Рё СЌС‚Рѕ РІСЃРµ РёСЃРєР»СЋС‡РµРЅРёСЏ, РЅРѕ С„Р°Р№Р»С‹ .meta СЃС‡РёС‚С‹РІР°СЋС‚СЃСЏ РєР°Рє null
             }
             return Childrens;
         }
 
 
         /// <summary>
-        /// Обрабатывает ассеты. Возвращает результат с отчётом о проделанных действиях.
+        /// РћР±СЂР°Р±Р°С‚С‹РІР°РµС‚ Р°СЃСЃРµС‚С‹. Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ СЃ РѕС‚С‡С‘С‚РѕРј Рѕ РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёСЏС….
         /// </summary>
         ObjectsSubstitutionResults process_assets(List<UnityEngine.Object> assets_to_process)
         {
@@ -629,7 +629,7 @@ namespace RenameRusToEng
                 string extension = Path.GetExtension(asset_path);
                 string new_name = "";
 
-                if (current_settings.names_flag) // Обработка имени:
+                if (current_settings.names_flag) // РћР±СЂР°Р±РѕС‚РєР° РёРјРµРЅРё:
                 {
                     ReplaceResults NameProcessResults = process_text(asset_name);
                     new_name = NameProcessResults.output;
@@ -645,8 +645,8 @@ namespace RenameRusToEng
                     current_obj_addition_info.Details = NameProcessResults.AdditionLogs;
                 }
 
-                // Обрабатываем чилдренов:
-                if (AssetDatabase.IsValidFolder(asset_path)) // Дети папки
+                // РћР±СЂР°Р±Р°С‚С‹РІР°РµРј С‡РёР»РґСЂРµРЅРѕРІ:
+                if (AssetDatabase.IsValidFolder(asset_path)) // Р”РµС‚Рё РїР°РїРєРё
                 {
                     ObjectsSubstitutionResults folder_info = process_assets(GetFolderContents(asset_path));
 
@@ -656,12 +656,12 @@ namespace RenameRusToEng
                 else
                 {
                     Type asset_type = asset.GetType();
-                    if (current_settings.code_flag && asset_type == typeof(MonoScript)) // "Дети" скрипта
+                    if (current_settings.code_flag && asset_type == typeof(MonoScript)) // "Р”РµС‚Рё" СЃРєСЂРёРїС‚Р°
                     {
                         ObjectSubstitutionInfo make_text_obj_info(List<LogResults> Details)
                         {
                             ObjectSubstitutionInfo _info = new ObjectSubstitutionInfo();
-                            _info.displayed_text = "Внутрифайловый текст";
+                            _info.displayed_text = "Р’РЅСѓС‚СЂРёС„Р°Р№Р»РѕРІС‹Р№ С‚РµРєСЃС‚";
                             _info.Details.AddRange(Details);
                             return _info;
                         }
@@ -675,14 +675,14 @@ namespace RenameRusToEng
 
                     if (current_settings.gameobjects_flag)
                     {
-                        if (asset_type == typeof(SceneAsset)) // "Дети" сцены
+                        if (asset_type == typeof(SceneAsset)) // "Р”РµС‚Рё" СЃС†РµРЅС‹
                         {
                             ObjectsSubstitutionResults scene_results = process_scene((SceneAsset)asset);
                             current_obj_main_info.Childrens.AddRange(scene_results.main_info);
                             current_obj_addition_info.Childrens.AddRange(scene_results.addition_info);
                         }
 
-                        if (asset_type == typeof(GameObject)) // "Дети" префаба.
+                        if (asset_type == typeof(GameObject)) // "Р”РµС‚Рё" РїСЂРµС„Р°Р±Р°.
                         {
                             ObjectsSubstitutionResults scene_results = process_prefab((GameObject)asset);
                             current_obj_main_info.Childrens.AddRange(scene_results.main_info);
@@ -692,11 +692,11 @@ namespace RenameRusToEng
                 }
 
 
-                // Задаём label, который будет отображаться в окне результатов (если есть изменения в имени, то имя отображается жирным текстом.)
+                // Р—Р°РґР°С‘Рј label, РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РѕС‚РѕР±СЂР°Р¶Р°С‚СЊСЃСЏ РІ РѕРєРЅРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ (РµСЃР»Рё РµСЃС‚СЊ РёР·РјРµРЅРµРЅРёСЏ РІ РёРјРµРЅРё, С‚Рѕ РёРјСЏ РѕС‚РѕР±СЂР°Р¶Р°РµС‚СЃСЏ Р¶РёСЂРЅС‹Рј С‚РµРєСЃС‚РѕРј.)
                 void format_file_label(ObjectSubstitutionInfo obj)
                 {
                     obj.displayed_text = asset_name_with_extension;
-                    if (obj.Details.Count > 0) // Если есть потенциальные изменения в имени.
+                    if (obj.Details.Count > 0) // Р•СЃР»Рё РµСЃС‚СЊ РїРѕС‚РµРЅС†РёР°Р»СЊРЅС‹Рµ РёР·РјРµРЅРµРЅРёСЏ РІ РёРјРµРЅРё.
                         obj.displayed_text += " -> " + new_name + extension;
                 }
                 format_file_label(current_obj_main_info);
@@ -704,7 +704,7 @@ namespace RenameRusToEng
 
 
 
-                // Добавляем в список, если найдены соответствующие последовательности в объекте или в его детях:
+                // Р”РѕР±Р°РІР»СЏРµРј РІ СЃРїРёСЃРѕРє, РµСЃР»Рё РЅР°Р№РґРµРЅС‹ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёРµ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚Рё РІ РѕР±СЉРµРєС‚Рµ РёР»Рё РІ РµРіРѕ РґРµС‚СЏС…:
                 if ((current_obj_main_info.Details.Count > 0) || (current_obj_main_info.Childrens.Count > 0))
                 {
                     result.main_info.Add(current_obj_main_info);
@@ -715,31 +715,31 @@ namespace RenameRusToEng
                 }
 
             }
-            //Debug.Log("Обрабатываем ассеты: " + result.main_info.Count + " " + result.addition_info.Count);
+            //Debug.Log("РћР±СЂР°Р±Р°С‚С‹РІР°РµРј Р°СЃСЃРµС‚С‹: " + result.main_info.Count + " " + result.addition_info.Count);
 
             return result;
         }
 
         /// <summary>
-        /// Отправная точка выполнения алгоритма.
+        /// РћС‚РїСЂР°РІРЅР°СЏ С‚РѕС‡РєР° РІС‹РїРѕР»РЅРµРЅРёСЏ Р°Р»РіРѕСЂРёС‚РјР°.
         /// </summary>
         ObjectsSubstitutionResults StartProcess()
         {
             ObjectsSubstitutionResults results = process_assets(root_settings_window.selected);
             ProvidedSubstitutions = results.main_info;
             AdditionSubstitutions = results.addition_info;
-            Debug.Log("ПРОЦЕСС ПЕРЕТОЛМАЧИВАТЕЛЯ ЗАВЕРШОН.");
+            Debug.Log("РџР РћР¦Р•РЎРЎ РџР•Р Р•РўРћР›РњРђР§РР’РђРўР•Р›РЇ Р—РђР’Р•Р РЁРћРќ.");
             return results;
         }
 
         /// <summary>
-        /// Открывает окно с результатами проделанных действий.
+        /// РћС‚РєСЂС‹РІР°РµС‚ РѕРєРЅРѕ СЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°РјРё РїСЂРѕРґРµР»Р°РЅРЅС‹С… РґРµР№СЃС‚РІРёР№.
         /// </summary>
         void ShowResults()
         {
-            Debug.Log("Открываю окно с результатами перептолмачивания...");
-            //Debug.Log("Русизмы которые найдены: " + AdditionSubstitutions[0].displayed_text);
-            ResultsMainWindow window = EditorWindow.CreateWindow<ResultsMainWindow>("Результаты", desiredDockNextTo: new Type[]
+            Debug.Log("РћС‚РєСЂС‹РІР°СЋ РѕРєРЅРѕ СЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°РјРё РїРµСЂРµРїС‚РѕР»РјР°С‡РёРІР°РЅРёСЏ...");
+            //Debug.Log("Р СѓСЃРёР·РјС‹ РєРѕС‚РѕСЂС‹Рµ РЅР°Р№РґРµРЅС‹: " + AdditionSubstitutions[0].displayed_text);
+            ResultsMainWindow window = EditorWindow.CreateWindow<ResultsMainWindow>("Р РµР·СѓР»СЊС‚Р°С‚С‹", desiredDockNextTo: new Type[]
             {
             root_settings_window.GetType()
             });// new ResultsMainWindow(this);
@@ -751,7 +751,7 @@ namespace RenameRusToEng
         {
             root_settings_window = root;
             make_changes = _make_changes;
-            current_settings = root.settings.Clone(); // копируем настройки.
+            current_settings = root.settings.Clone(); // РєРѕРїРёСЂСѓРµРј РЅР°СЃС‚СЂРѕР№РєРё.
 
             AutoSortedDict Razgovornik = root.Razgovornik;
             AutoSortedDict.SortType current_SortRazgovornik = Razgovornik.SortRazgovornik;
@@ -764,77 +764,77 @@ namespace RenameRusToEng
                 case RenameSettingsWindow.AutoFindWordsEnum.WORD_RUS:
                     AutoFindRegex = NativeWordRegex;
                     break;
-                case RenameSettingsWindow.AutoFindWordsEnum.ONE_SEPARATOR_RUS: // Один разделяющий символ
+                case RenameSettingsWindow.AutoFindWordsEnum.ONE_SEPARATOR_RUS: // РћРґРёРЅ СЂР°Р·РґРµР»СЏСЋС‰РёР№ СЃРёРјРІРѕР»
                     AutoFindRegex = new Regex(NativeWord + @"(?n)(." + NativeWord + @")+(?-n)", RegexOptions.Compiled);
                     break;
-                case RenameSettingsWindow.AutoFindWordsEnum.TWO_SEPARATOR_RUS: // Два разделяющих символа
+                case RenameSettingsWindow.AutoFindWordsEnum.TWO_SEPARATOR_RUS: // Р”РІР° СЂР°Р·РґРµР»СЏСЋС‰РёС… СЃРёРјРІРѕР»Р°
                     AutoFindRegex = new Regex(NativeWord + @"(?n)(.{1,2}" + NativeWord + @")+(?-n)", RegexOptions.Compiled);
                     break;
-                case RenameSettingsWindow.AutoFindWordsEnum.THREE_SEPARATOR_RUS: // Три разделяющих символа
+                case RenameSettingsWindow.AutoFindWordsEnum.THREE_SEPARATOR_RUS: // РўСЂРё СЂР°Р·РґРµР»СЏСЋС‰РёС… СЃРёРјРІРѕР»Р°
                     AutoFindRegex = new Regex(NativeWord + @"(?n)(.{1,3}" + NativeWord + @")+(?-n)", RegexOptions.Compiled);
                     break;
-                case RenameSettingsWindow.AutoFindWordsEnum.FOUR_SEPARATOR_RUS: // Четыре разделяющих символа
+                case RenameSettingsWindow.AutoFindWordsEnum.FOUR_SEPARATOR_RUS: // Р§РµС‚С‹СЂРµ СЂР°Р·РґРµР»СЏСЋС‰РёС… СЃРёРјРІРѕР»Р°
                     AutoFindRegex = new Regex(NativeWord + @"(?n)(.{1,4}" + NativeWord + @")+(?-n)", RegexOptions.Compiled);
                     break;
-                case RenameSettingsWindow.AutoFindWordsEnum.FIVE_SEPARATOR_RUS: // Пять разделяющих символов
+                case RenameSettingsWindow.AutoFindWordsEnum.FIVE_SEPARATOR_RUS: // РџСЏС‚СЊ СЂР°Р·РґРµР»СЏСЋС‰РёС… СЃРёРјРІРѕР»РѕРІ
                     AutoFindRegex = new Regex(NativeWord + @"(?n)(.{1,5}" + NativeWord + @")+(?-n)", RegexOptions.Compiled);
                     break;
-                case RenameSettingsWindow.AutoFindWordsEnum.SENTENCE_RUS: // Предложение
-                    AutoFindRegex = new Regex("[А-ЯЁ][а-яё\\s,;:—\\-\\\"]*([;]|[.?!]{0,3}|(?=[A-Za-z]|$))", RegexOptions.Compiled);
+                case RenameSettingsWindow.AutoFindWordsEnum.SENTENCE_RUS: // РџСЂРµРґР»РѕР¶РµРЅРёРµ
+                    AutoFindRegex = new Regex("[Рђ-РЇРЃ][Р°-СЏС‘\\s,;:вЂ”\\-\\\"]*([;]|[.?!]{0,3}|(?=[A-Za-z]|$))", RegexOptions.Compiled);
                     break;
-                case RenameSettingsWindow.AutoFindWordsEnum.OTHER: // Другое
+                case RenameSettingsWindow.AutoFindWordsEnum.OTHER: // Р”СЂСѓРіРѕРµ
                     AutoFindRegex = new Regex(current_settings.CustomFindRegex);
                     break;
             }
 
             if (current_settings.ActuallySortByLength)
             {
-                Razgovornik.SortRazgovornik = AutoSortedDict.SortType.BY_LENGHT; // Сортирую по длине. Причины:
-                                                                                 //     1) На случай если кому-то понадобится заменять наименования вроде "весёлыйгусь", то можно было бы разрешить вхождения подслов, и при этом всё равно избежать неправильных замен.
-                                                                                 //     2) Чтобы учесть и вторую колонку в том числе, для однозначности и определённости, чтобы алгоритм не брал случайное из значений, если ключи в левой колонке Разговорника по недосмотру пользователя совпадут.
+                Razgovornik.SortRazgovornik = AutoSortedDict.SortType.BY_LENGHT; // РЎРѕСЂС‚РёСЂСѓСЋ РїРѕ РґР»РёРЅРµ. РџСЂРёС‡РёРЅС‹:
+                                                                                 //     1) РќР° СЃР»СѓС‡Р°Р№ РµСЃР»Рё РєРѕРјСѓ-С‚Рѕ РїРѕРЅР°РґРѕР±РёС‚СЃСЏ Р·Р°РјРµРЅСЏС‚СЊ РЅР°РёРјРµРЅРѕРІР°РЅРёСЏ РІСЂРѕРґРµ "РІРµСЃС‘Р»С‹Р№РіСѓСЃСЊ", С‚Рѕ РјРѕР¶РЅРѕ Р±С‹Р»Рѕ Р±С‹ СЂР°Р·СЂРµС€РёС‚СЊ РІС…РѕР¶РґРµРЅРёСЏ РїРѕРґСЃР»РѕРІ, Рё РїСЂРё СЌС‚РѕРј РІСЃС‘ СЂР°РІРЅРѕ РёР·Р±РµР¶Р°С‚СЊ РЅРµРїСЂР°РІРёР»СЊРЅС‹С… Р·Р°РјРµРЅ.
+                                                                                 //     2) Р§С‚РѕР±С‹ СѓС‡РµСЃС‚СЊ Рё РІС‚РѕСЂСѓСЋ РєРѕР»РѕРЅРєСѓ РІ С‚РѕРј С‡РёСЃР»Рµ, РґР»СЏ РѕРґРЅРѕР·РЅР°С‡РЅРѕСЃС‚Рё Рё РѕРїСЂРµРґРµР»С‘РЅРЅРѕСЃС‚Рё, С‡С‚РѕР±С‹ Р°Р»РіРѕСЂРёС‚Рј РЅРµ Р±СЂР°Р» СЃР»СѓС‡Р°Р№РЅРѕРµ РёР· Р·РЅР°С‡РµРЅРёР№, РµСЃР»Рё РєР»СЋС‡Рё РІ Р»РµРІРѕР№ РєРѕР»РѕРЅРєРµ Р Р°Р·РіРѕРІРѕСЂРЅРёРєР° РїРѕ РЅРµРґРѕСЃРјРѕС‚СЂСѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃРѕРІРїР°РґСѓС‚.
             }
 
-            // Подготовка регулярных выражений по элементам Разговорника:
+            // РџРѕРґРіРѕС‚РѕРІРєР° СЂРµРіСѓР»СЏСЂРЅС‹С… РІС‹СЂР°Р¶РµРЅРёР№ РїРѕ СЌР»РµРјРµРЅС‚Р°Рј Р Р°Р·РіРѕРІРѕСЂРЅРёРєР°:
             foreach (DictElement i in Razgovornik)
             {
                 string rus = i.rus;
                 string eng = i.eng;
-                RegexOptions regexOptions = RegexOptions.Compiled; // Чтобы не компилировать их каждое сравнение.
+                RegexOptions regexOptions = RegexOptions.Compiled; // Р§С‚РѕР±С‹ РЅРµ РєРѕРјРїРёР»РёСЂРѕРІР°С‚СЊ РёС… РєР°Р¶РґРѕРµ СЃСЂР°РІРЅРµРЅРёРµ.
 
                 /*
                 if (!current_settings.LetterCase)
                 {
-                    regexOptions = regexOptions | RegexOptions.IgnoreCase; Так нельзя, потому что есть ещё всякие разные правила. Эту настройку нужно включать выключать в середине шаблона.
+                    regexOptions = regexOptions | RegexOptions.IgnoreCase; РўР°Рє РЅРµР»СЊР·СЏ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РµСЃС‚СЊ РµС‰С‘ РІСЃСЏРєРёРµ СЂР°Р·РЅС‹Рµ РїСЂР°РІРёР»Р°. Р­С‚Сѓ РЅР°СЃС‚СЂРѕР№РєСѓ РЅСѓР¶РЅРѕ РІРєР»СЋС‡Р°С‚СЊ РІС‹РєР»СЋС‡Р°С‚СЊ РІ СЃРµСЂРµРґРёРЅРµ С€Р°Р±Р»РѕРЅР°.
                 }
                 */
 
                 if (!current_settings.UseRegularExpr)
                 {
-                    rus = Regex.Escape(rus); // Экранируем все символы, которые могут быть по-особому проинтерпретированны регулярным выражением.
+                    rus = Regex.Escape(rus); // Р­РєСЂР°РЅРёСЂСѓРµРј РІСЃРµ СЃРёРјРІРѕР»С‹, РєРѕС‚РѕСЂС‹Рµ РјРѕРіСѓС‚ Р±С‹С‚СЊ РїРѕ-РѕСЃРѕР±РѕРјСѓ РїСЂРѕРёРЅС‚РµСЂРїСЂРµС‚РёСЂРѕРІР°РЅРЅС‹ СЂРµРіСѓР»СЏСЂРЅС‹Рј РІС‹СЂР°Р¶РµРЅРёРµРј.
 
-                    eng = eng.Replace("$", "$$"); // Экранирую символы $, чтобы регулярка не пыталась их заменить (а замена может произойти в случае подстрок
-                                                  // вида "$2" см. документацию о substitutions. Это обрабатывается именно здесь, а не внутри CollectMatchesAndReplace(),
-                                                  // чтобы код был консистентным (не сильно зависел от того, используются ли регулярные выражения пользователем или нет),
-                                                  // понятным и поддающимся изменениям.
+                    eng = eng.Replace("$", "$$"); // Р­РєСЂР°РЅРёСЂСѓСЋ СЃРёРјРІРѕР»С‹ $, С‡С‚РѕР±С‹ СЂРµРіСѓР»СЏСЂРєР° РЅРµ РїС‹С‚Р°Р»Р°СЃСЊ РёС… Р·Р°РјРµРЅРёС‚СЊ (Р° Р·Р°РјРµРЅР° РјРѕР¶РµС‚ РїСЂРѕРёР·РѕР№С‚Рё РІ СЃР»СѓС‡Р°Рµ РїРѕРґСЃС‚СЂРѕРє
+                                                  // РІРёРґР° "$2" СЃРј. РґРѕРєСѓРјРµРЅС‚Р°С†РёСЋ Рѕ substitutions. Р­С‚Рѕ РѕР±СЂР°Р±Р°С‚С‹РІР°РµС‚СЃСЏ РёРјРµРЅРЅРѕ Р·РґРµСЃСЊ, Р° РЅРµ РІРЅСѓС‚СЂРё CollectMatchesAndReplace(),
+                                                  // С‡С‚РѕР±С‹ РєРѕРґ Р±С‹Р» РєРѕРЅСЃРёСЃС‚РµРЅС‚РЅС‹Рј (РЅРµ СЃРёР»СЊРЅРѕ Р·Р°РІРёСЃРµР» РѕС‚ С‚РѕРіРѕ, РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ Р»Рё СЂРµРіСѓР»СЏСЂРЅС‹Рµ РІС‹СЂР°Р¶РµРЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј РёР»Рё РЅРµС‚),
+                                                  // РїРѕРЅСЏС‚РЅС‹Рј Рё РїРѕРґРґР°СЋС‰РёРјСЃСЏ РёР·РјРµРЅРµРЅРёСЏРј.
                 }
 
                 if (current_settings.ReplaceDashes) eng = eng.Replace("-", "_");
                 if (current_settings.ReplaceSpaces) eng = eng.Replace(" ", "_");
 
-                // Если PascalCase и отключен учёт регистра, проще просто обработать этот конфликтный случай отдельно:
+                // Р•СЃР»Рё PascalCase Рё РѕС‚РєР»СЋС‡РµРЅ СѓС‡С‘С‚ СЂРµРіРёСЃС‚СЂР°, РїСЂРѕС‰Рµ РїСЂРѕСЃС‚Рѕ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ СЌС‚РѕС‚ РєРѕРЅС„Р»РёРєС‚РЅС‹Р№ СЃР»СѓС‡Р°Р№ РѕС‚РґРµР»СЊРЅРѕ:
                 if (!current_settings.LetterCase && !current_settings.UseRegularExpr && !current_settings.SubwordsInside && current_settings.AutoFindWordsType == 0)
                 {
                     List<string> ruses_to_process = new List<string>();
 
 
-                    if (NativeLetterBRegex.Match(rus).Success) // Если первый символ = буква.
+                    if (NativeLetterBRegex.Match(rus).Success) // Р•СЃР»Рё РїРµСЂРІС‹Р№ СЃРёРјРІРѕР» = Р±СѓРєРІР°.
                     {
                         string substr = rus.Substring(1);
                         rus = (@"(?n)(((?<=^|[^" + NativeCaps + @"])" + char.ToUpper(rus[0]) + ")|(" + @"(?<=^|([" + NativeCaps + "][" + NativeCaps + "])|[^" + NativeAlphabet + @"])" + char.ToLower(rus[0]) + @"))(?i)" + substr);
                     }
                     else rus = @"(?n)(?i)" + rus;
 
-                    if (NativeLetterERegex.Match(rus).Success) // Если последний символ = буква.
+                    if (NativeLetterERegex.Match(rus).Success) // Р•СЃР»Рё РїРѕСЃР»РµРґРЅРёР№ СЃРёРјРІРѕР» = Р±СѓРєРІР°.
                     {
                         int last_indx = rus.Length - 1;
                         string substr = rus.Substring(0, last_indx);
@@ -860,22 +860,22 @@ namespace RenameRusToEng
 
                     if (!current_settings.UseRegularExpr && !current_settings.SubwordsInside)
                     {
-                        if (current_settings.AutoFindWordsType == 0) // "Если нужно учитывать PascalCase..."
+                        if (current_settings.AutoFindWordsType == 0) // "Р•СЃР»Рё РЅСѓР¶РЅРѕ СѓС‡РёС‚С‹РІР°С‚СЊ PascalCase..."
                         {
-                            if (BigNativeLetterBRegex.Match(i.rus).Success) // "Если первая буква большая..."
-                                rus = @"(?<=^|[^" + NativeCaps + @"])" + rus; // "То перед ней не должно быть больших."
+                            if (BigNativeLetterBRegex.Match(i.rus).Success) // "Р•СЃР»Рё РїРµСЂРІР°СЏ Р±СѓРєРІР° Р±РѕР»СЊС€Р°СЏ..."
+                                rus = @"(?<=^|[^" + NativeCaps + @"])" + rus; // "РўРѕ РїРµСЂРµРґ РЅРµР№ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»СЊС€РёС…."
                             else
                             {
-                                if (SmallNativeLetterBRegex.Match(i.rus).Success) // "Если первая буква маленькая..."
-                                    rus = @"(?<=^|([" + NativeCaps + "][" + NativeCaps + "])|[^" + NativeAlphabet + @"])" + rus; // "То перед ней не должно быть маленьких или одной большой."
+                                if (SmallNativeLetterBRegex.Match(i.rus).Success) // "Р•СЃР»Рё РїРµСЂРІР°СЏ Р±СѓРєРІР° РјР°Р»РµРЅСЊРєР°СЏ..."
+                                    rus = @"(?<=^|([" + NativeCaps + "][" + NativeCaps + "])|[^" + NativeAlphabet + @"])" + rus; // "РўРѕ РїРµСЂРµРґ РЅРµР№ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РјР°Р»РµРЅСЊРєРёС… РёР»Рё РѕРґРЅРѕР№ Р±РѕР»СЊС€РѕР№."
                             }
 
-                            if (BigNativeLetterERegex.Match(i.rus).Success) // "Если последняя буква большая..."
-                                rus = rus + @"(?=$|[^" + NativeCaps + "])"; // "То после неё не должно быть больших."
+                            if (BigNativeLetterERegex.Match(i.rus).Success) // "Р•СЃР»Рё РїРѕСЃР»РµРґРЅСЏСЏ Р±СѓРєРІР° Р±РѕР»СЊС€Р°СЏ..."
+                                rus = rus + @"(?=$|[^" + NativeCaps + "])"; // "РўРѕ РїРѕСЃР»Рµ РЅРµС‘ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»СЊС€РёС…."
                             else
                             {
-                                if (SmallNativeLetterERegex.Match(i.rus).Success) // "Если последняя буква маленькая..."
-                                    rus = rus + @"(?=$|[^" + NativeSmall + "])"; // "То после неё не должно быть маленькой."
+                                if (SmallNativeLetterERegex.Match(i.rus).Success) // "Р•СЃР»Рё РїРѕСЃР»РµРґРЅСЏСЏ Р±СѓРєРІР° РјР°Р»РµРЅСЊРєР°СЏ..."
+                                    rus = rus + @"(?=$|[^" + NativeSmall + "])"; // "РўРѕ РїРѕСЃР»Рµ РЅРµС‘ РЅРµ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РјР°Р»РµРЅСЊРєРѕР№."
                             }
                         }
                         else
@@ -898,7 +898,7 @@ namespace RenameRusToEng
                 }
             }
 
-            Razgovornik.SortRazgovornik = current_SortRazgovornik; // Восстанавливаем порядок Разговорника.
+            Razgovornik.SortRazgovornik = current_SortRazgovornik; // Р’РѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµРј РїРѕСЂСЏРґРѕРє Р Р°Р·РіРѕРІРѕСЂРЅРёРєР°.
 
             StartProcess();
             ShowResults();

@@ -1,10 +1,10 @@
-using System.Text.RegularExpressions;
+п»їusing System.Text.RegularExpressions;
 
 namespace RenameRusToEng
 {
 
     /// <summary>
-    /// Вспомогательный класс для составления отчётных логов о заменах.
+    /// Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Р№ РєР»Р°СЃСЃ РґР»СЏ СЃРѕСЃС‚Р°РІР»РµРЅРёСЏ РѕС‚С‡С‘С‚РЅС‹С… Р»РѕРіРѕРІ Рѕ Р·Р°РјРµРЅР°С….
     /// </summary>
     class LastMatchesInfo
     {
